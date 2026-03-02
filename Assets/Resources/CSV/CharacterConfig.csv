@@ -1,0 +1,4 @@
+﻿CharID,SpritePath,CharPositionX,CharPositionY,CharSizeX,CharSizeY,CharLayer,CharVisible,TintColor,Pivot
+云柒,Sprite/Yunqi,-600,0,800,1400,1,0,,
+豆包,Sprite/Doubao,-600,-100,600,850,1,0,,
+GPT,Sprite/GPT,-600,-100,600,850,1,0,,
