@@ -266,7 +266,7 @@ public class TextSystem : MonoBehaviour
                     StartCoroutine(HandlePauseEvent(state, evt.value));
                     break;
                 case ControlEventType.SpeedChange:
-                    state.currentSpeedScale = evt.value;
+                    state.currentSpeedScale = Mathf.Max(0.01f, evt.value);
                     break;
                 case ControlEventType.WaitForInput:
                     state.waitingForInput = true;

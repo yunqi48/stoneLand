@@ -16,6 +16,7 @@ public class DialogueUIManager : MonoBehaviour
     [SerializeField] private List<SpeakerProfile> speakerProfiles; // 角色配置列表
     [SerializeField] private string defaultWindowKey = "default"; // 默认窗口Key
     [SerializeField] private TextPlaySettings defaultPlaySettings; // 默认文本播放配置
+    [SerializeField] private Transform windowRoot; // window parent for instantiated prefabs
 
     // 窗口池（Key：窗口ID/名称，Value：对话框实例）
     private Dictionary<string, DialogueWindow> windowPool = new Dictionary<string, DialogueWindow>();
@@ -23,6 +24,7 @@ public class DialogueUIManager : MonoBehaviour
     private Dictionary<string, SpeakerProfile> speakerCache = new Dictionary<string, SpeakerProfile>();
     // 当前激活的对话框
     private DialogueWindow activeWindow;
+    private readonly List<DialogueWindow> runtimeInstancedWindows = new List<DialogueWindow>();
 
     #region 单例初始化
     private void Awake()
@@ -86,7 +88,14 @@ public class DialogueUIManager : MonoBehaviour
             }
 
             // 使用窗口的显式ID（优先）或实例ID作为Key，避免命名重复
-            string windowKey = GetWindowKey(window);
+            DialogueWindow windowInstance = ResolveWindowInstance(window);
+            if (windowInstance == null)
+            {
+                Debug.LogWarning($"[{nameof(DialogueUIManager)}] Failed to resolve preset window instance", this);
+                continue;
+            }
+
+            string windowKey = GetWindowKey(windowInstance);
 
             // 检查重复Key
             if (windowPool.ContainsKey(windowKey))
@@ -96,13 +105,33 @@ public class DialogueUIManager : MonoBehaviour
             }
 
             // 重置窗口并加入池
-            window.ResetWindow();
-            windowPool.Add(windowKey, window);
+            windowInstance.ResetWindow();
+            windowPool.Add(windowKey, windowInstance);
 
             // 隐藏预设窗口
-            window.HideWindow(true);
+            windowInstance.HideWindow(true);
         }
     }
+
+    /// <summary>
+    /// Resolve preset item to a runtime dialogue window instance.
+    /// Scene objects are reused; prefab assets are instantiated.
+    /// </summary>
+    private DialogueWindow ResolveWindowInstance(DialogueWindow source)
+    {
+        if (source == null) return null;
+
+        if (source.gameObject.scene.IsValid())
+        {
+            return source;
+        }
+
+        var instance = Instantiate(source, windowRoot);
+        instance.name = source.name;
+        runtimeInstancedWindows.Add(instance);
+        return instance;
+    }
+
 
     /// <summary>
     /// 初始化角色缓存（防空）
@@ -139,7 +168,7 @@ public class DialogueUIManager : MonoBehaviour
         // if (!string.IsNullOrEmpty(window.windowId)) return window.windowId;
 
         // 备用方案：使用实例ID，保证唯一性
-        return window.gameObject.GetInstanceID().ToString();
+        return window.gameObject.name;
     }
     #endregion
 
@@ -216,7 +245,12 @@ public class DialogueUIManager : MonoBehaviour
         }
 
         // 4. 返回第一个窗口（降级方案）
-        return windowPool.Count > 0 ? windowPool.Values.GetEnumerator().Current : null;
+        foreach (var pooled in windowPool.Values)
+        {
+            return pooled;
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -367,8 +401,17 @@ public class DialogueUIManager : MonoBehaviour
         }
 
         windowPool.Clear();
-        presetWindows?.Clear();
         activeWindow = null;
+
+        for (int i = runtimeInstancedWindows.Count - 1; i >= 0; i--)
+        {
+            var runtimeWindow = runtimeInstancedWindows[i];
+            if (runtimeWindow != null)
+            {
+                Destroy(runtimeWindow.gameObject);
+            }
+        }
+        runtimeInstancedWindows.Clear();
     }
     #endregion
 

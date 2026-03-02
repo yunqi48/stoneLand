@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using UnityEngine;
 
@@ -79,7 +80,7 @@ public class TagParser : MonoBehaviour
 
         if (tagContent.StartsWith("pause="))
         {
-            if (float.TryParse(tagContent.Substring(6), out float pauseTime))
+            if (float.TryParse(tagContent.Substring(6), NumberStyles.Float, CultureInfo.InvariantCulture, out float pauseTime))
             {
                 events.Add(new ControlEvent
                 {
@@ -93,7 +94,7 @@ public class TagParser : MonoBehaviour
         }
         else if (tagContent.StartsWith("speed="))
         {
-            if (float.TryParse(tagContent.Substring(6), out float speedValue))
+            if (float.TryParse(tagContent.Substring(6), NumberStyles.Float, CultureInfo.InvariantCulture, out float speedValue))
             {
                 events.Add(new ControlEvent
                 {
