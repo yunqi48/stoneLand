@@ -1,321 +1,442 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Threading;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 /// <summary>
-/// 文本渲染器：支持场景+预制体定位DialogueWindow中的DialogueText
-/// 适配：UpdateVisibleRange支持ParsedText类型，解决CS1503类型转换错误
+/// 文本打字机系统核心控制器
+/// 负责文本的逐字播放、事件处理、音效同步、暂停/跳过/等待输入等核心逻辑
 /// </summary>
-public class TextRenderer : MonoBehaviour
+[RequireComponent(typeof(TextRenderer), typeof(TagParser))] // 自动依赖组件，避免缺失
+public class TextSystem : MonoBehaviour
 {
-    // 目标文本组件（自动查找）
-    private TextMeshProUGUI _dialogueTextComponent;
+    #region 组件配置（Inspector 可配置）
+    [SerializeField]
+    [Tooltip("文本渲染器：负责文本的可视化显示")]
+    private TextRenderer textRenderer;
 
-    // 基础定位配置（兼容旧逻辑）
-    [Header("基础定位配置")]
-    [Tooltip("DialogueText在DialogueWindow中的路径")]
-    [SerializeField] private string _dialogueTextPath = "DialogueText";
+    [SerializeField]
+    [Tooltip("标签解析器：负责解析文本中的控制标签")]
+    private TagParser tagParser;
 
-    // 场景+预制体定位配置
-    [Header("场景+预制体定位配置")]
-    [Tooltip("目标场景名称（留空=当前激活场景）")]
-    [SerializeField] private string _targetSceneName = "";
-    [Tooltip("DialogueWindow预制体根物体名称")]
-    [SerializeField] private string _dialogueWindowName = "DialogueWindow";
+    [SerializeField]
+    [Tooltip("打字音效控制器：负责同步播放打字音效")]
+    private TypeSoundController soundController;
 
-    // 外部访问文本组件的属性（解决CS1061 TmpText错误）
-    public TextMeshProUGUI TmpText
-    {
-        get => _dialogueTextComponent;
-        set => _dialogueTextComponent = value;
-    }
-
-    // TMP富文本标签闭合映射
-    private readonly Dictionary<string, string> _closingTags = new Dictionary<string, string>()
-    {
-        { "<color", "</color>" },
-        { "<size", "</size>" },
-        { "<b>", "</b>" },
-        { "<i>", "</i>" },
-        { "<u>", "</u>" },
-        { "<mark", "</mark>" },
-        { "<style", "</style>" }
-    };
-
-    #region 外部调用方法（兼容所有CS1061/CS1503错误）
-    // 基础设置文本（保留原有逻辑）
-    public void SetDialogueText(string content)
-    {
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogWarning("DialogueText组件未找到，无法设置文本", this);
-            return;
-        }
-        _dialogueTextComponent.text = AutoCloseUnclosedTags(content);
-    }
-
-    // 兼容SetText调用（解决CS1061 SetText错误）
-    public void SetText(string content)
-    {
-        SetDialogueText(content);
-    }
-
-    // 获取当前文本
-    public string GetDialogueText()
-    {
-        return _dialogueTextComponent?.text ?? string.Empty;
-    }
-
-    // 清空文本（解决CS1061 Clear错误）
-    public void Clear()
-    {
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogWarning("DialogueText组件未找到，无法清空文本", this);
-            return;
-        }
-        _dialogueTextComponent.text = string.Empty;
-    }
-
-    // 无参版本UpdateVisibleRange（向下兼容）
-    public void UpdateVisibleRange()
-    {
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogWarning("DialogueText组件未找到，无法更新可见范围", this);
-            return;
-        }
-        _dialogueTextComponent.gameObject.SetActive(true);
-    }
-
-    // 适配ParsedText类型的UpdateVisibleRange（核心修复CS1503）
-    // 假设ParsedText有一个Text/Content属性存储字符串内容，可根据实际情况修改
-    public void UpdateVisibleRange(int currentCharIndex, ParsedText parsedText)
-    {
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogWarning("DialogueText组件未找到，无法更新可见范围", this);
-            return;
-        }
-
-        // 从ParsedText中提取字符串内容（关键：替换为你实际的字符串属性名）
-        // 常见属性名：Text / Content / Value / RawText 等，根据你的ParsedText类调整
-        string textContent = parsedText?.Text ?? string.Empty;
-
-        // 核心逻辑：逐字显示 + 自动闭合标签
-        if (!string.IsNullOrEmpty(textContent) && currentCharIndex >= 0)
-        {
-            int displayLength = Mathf.Min(currentCharIndex + 1, textContent.Length);
-            string visibleText = textContent.Substring(0, displayLength);
-            string processedText = AutoCloseUnclosedTags(visibleText);
-            _dialogueTextComponent.text = processedText;
-        }
-
-        _dialogueTextComponent.gameObject.SetActive(true);
-    }
-
-    // 兼容string类型的重载（防止其他调用处报错）
-    public void UpdateVisibleRange(int currentCharIndex, string parsedText)
-    {
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogWarning("DialogueText组件未找到，无法更新可见范围", this);
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(parsedText) && currentCharIndex >= 0)
-        {
-            int displayLength = Mathf.Min(currentCharIndex + 1, parsedText.Length);
-            string visibleText = parsedText.Substring(0, displayLength);
-            string processedText = AutoCloseUnclosedTags(visibleText);
-            _dialogueTextComponent.text = processedText;
-        }
-
-        _dialogueTextComponent.gameObject.SetActive(true);
-    }
-
-    // ShowInstant方法（解决CS1061 ShowInstant错误）
-    public void ShowInstant()
-    {
-        ShowInstant(string.Empty);
-    }
-
-    public void ShowInstant(string content)
-    {
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogWarning("DialogueText组件未找到，无法即时显示文本", this);
-            return;
-        }
-        _dialogueTextComponent.gameObject.SetActive(true);
-        if (!string.IsNullOrEmpty(content))
-        {
-            SetDialogueText(content);
-        }
-    }
+    [SerializeField]
+    [Tooltip("默认播放设置：文本播放的基础配置")]
+    private TextPlaySettings defaultSettings;
     #endregion
 
-    #region 内部工具方法
-    // 自动闭合未关闭的TMP标签
-    private string AutoCloseUnclosedTags(string input)
-    {
-        if (string.IsNullOrEmpty(input)) return input;
+    #region 事件回调（供外部订阅）
+    /// <summary>
+    /// 文本播放完成时触发的事件
+    /// </summary>
+    public UnityEvent OnTextComplete;
 
-        string processed = input;
-        foreach (var tagPair in _closingTags)
-        {
-            string startTagKey = tagPair.Key;
-            string closeTag = tagPair.Value;
+    /// <summary>
+    /// 文本播放到「等待输入」标签时触发的事件
+    /// </summary>
+    public UnityEvent OnWaitForInput;
 
-            int startCount = CountOccurrences(processed, startTagKey);
-            int closeCount = CountOccurrences(processed, closeTag);
-
-            if (startCount > closeCount)
-            {
-                int missing = startCount - closeCount;
-                for (int i = 0; i < missing; i++)
-                {
-                    processed += closeTag;
-                }
-            }
-        }
-        return processed;
-    }
-
-    // 统计子串出现次数
-    private int CountOccurrences(string source, string substring)
-    {
-        if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(substring))
-            return 0;
-
-        int count = 0;
-        int index = 0;
-        while ((index = source.IndexOf(substring, index)) != -1)
-        {
-            count++;
-            index += substring.Length;
-        }
-        return count;
-    }
+    /// <summary>
+    /// 从「等待输入」状态恢复播放时触发的事件
+    /// </summary>
+    public UnityEvent OnResumeFromWait;
     #endregion
 
-    #region 组件查找逻辑
+    #region 私有状态管理
+    /// <summary>
+    /// 当前文本播放的状态对象（存储播放进度、配置、事件等）
+    /// </summary>
+    private TextPlayState currentPlayState;
+    /// <summary>
+    /// 打字协程引用（用于暂停/停止协程）
+    /// </summary>
+    private Coroutine typingCoroutine;
+    /// <summary>
+    /// 逐帧动态变化计数
+    /// </summary>
+    private float currentDelay;
+    #endregion
+
+    /// <summary>
+    /// 只读属性：是否正在播放文本（未暂停、未等待输入）
+    /// </summary>
+    public bool IsPlaying => typingCoroutine != null && currentPlayState != null && !currentPlayState.IsPaused;
+    /// <summary>
+    /// 只读属性：是否处于「等待输入」状态
+    /// </summary>
+    public bool IsWaitingForInput => currentPlayState != null && currentPlayState.waitingForInput;
+
+    #region 生命周期方法
+    /// <summary>
+    /// 初始化：自动获取依赖组件 + 初始化默认播放设置
+    /// </summary>
     private void Awake()
     {
-        GameObject dialogueWindow = FindDialogueWindowInScene();
-        if (dialogueWindow != null)
+        // 自动获取组件
+        if (textRenderer == null) textRenderer = GetComponent<TextRenderer>();
+        if (tagParser == null) tagParser = GetComponent<TagParser>();
+        if (soundController == null) soundController = GetComponent<TypeSoundController>();
+
+        defaultSettings = new TextPlaySettings
         {
-            FindDialogueTextInWindow(dialogueWindow);
+            baseDelay = 0.05f,       // 基础打字间隔（可自定义）
+            playTypeSound = true,     // 是否播放打字音效
+            autoAdvanceOnComplete = true, // 文本完成后是否自动触发完成事件
+            allowSkip = true,         // 是否允许跳过
+            skipWaitOnHardSkip = true // 硬跳过时是否跳过等待
+        };
+    }
+
+    /// <summary>
+    /// 销毁时清理资源：释放 CancellationTokenSource，避免内存泄漏
+    /// </summary>
+    private void OnDestroy()
+    {
+        // 清理CTS，避免资源泄漏
+        if (currentPlayState?.cts != null)
+        {
+            currentPlayState.cts.Cancel();
+            currentPlayState.cts.Dispose();
+            currentPlayState.cts = null;
+        }
+    }
+    #endregion
+
+    #region
+    // 播放文本（核心接口）
+    public void PlayText(string rawText)
+    {
+        PlayText(rawText, defaultSettings);
+    }
+
+    /// <summary>
+    /// 播放文本（核心接口：自定义播放设置）
+    /// </summary>
+    /// <param name="rawText">原始文本（可包含控制标签）</param>
+    /// <param name="settings">自定义播放设置</param>
+    public void PlayText(string rawText, TextPlaySettings settings)
+    {
+        // 停止当前正在播放的文本（避免多文本同时播放）
+        AbortCurrent();
+
+        // 初始化播放状态对象
+        currentPlayState = new TextPlayState
+        {
+            rawText = rawText,                          // 原始文本
+            parsedText = tagParser.Parse(rawText),      // 解析后的文本（含控制事件）
+            settings = settings,                        // 播放设置
+            cts = new CancellationTokenSource(),        // 取消令牌（用于终止协程）
+            currentSpeedScale = 1f,                     // 初始播放速度缩放（1倍速）
+            isFastForward = false,                      // 初始未快进
+            nextEventIndex = 0,                         // 下一个待处理事件的索引
+            pauseRequestCount = 0,                      // 暂停请求计数器（支持嵌套暂停）
+            waitingForInput = false                     // 初始未等待输入
+        };
+
+        // 空值防护：文本渲染器为空时终止播放
+        if (textRenderer == null)
+        {
+            Debug.LogError("TextSystem 缺少 TextRenderer 组件，终止文本播放！");
+            currentPlayState.cts.Cancel();
+            currentPlayState.cts.Dispose();
+            currentPlayState = null;
+            return;
+        }
+
+        // 启动打字协程（核心播放逻辑）
+        typingCoroutine = StartCoroutine(RunTypingCoroutine(currentPlayState));
+    }
+    #endregion
+
+    #region 核心协程：逐字播放文本
+    /// <summary>
+    /// 打字核心协程：处理逐字播放、暂停、变速、等待输入、事件触发等逻辑
+    /// 优化点：修复时间累积误差、事件指针遍历（避免重复处理）、空值防护
+    /// </summary>
+    /// <param name="state">当前播放状态</param>
+    /// <returns>协程迭代器</returns>
+    private IEnumerator RunTypingCoroutine(TextPlayState state)
+    {
+        // 初始化：清空文本渲染器 + 重置音效计数器
+        textRenderer.Clear();
+        soundController?.ResetCounter(); // 空值防护：避免音效控制器为空时报错
+
+        // 获取解析后文本的可见字符总数（排除控制标签）
+        int totalVisibleChars = state.parsedText.VisibleLength;
+        // 当前打字间隔（动态调整：基础间隔 / 速度缩放）
+
+        // 主循环：逐字播放文本（直到播放完成或被取消）
+        while (state.currentCharIndex < totalVisibleChars && !state.cts.Token.IsCancellationRequested)
+        {
+            // 1. 处理暂停状态（主动暂停 + 暂停标签触发的暂停）
+            while (state.IsPaused || state.isPausing)
+            {
+                yield return null; // 暂停时帧等待
+                if (state.cts.Token.IsCancellationRequested) break; // 被取消则退出循环
+            }
+
+            // 2. 处理等待输入状态（WaitForInput 标签触发）
+            while (state.waitingForInput)
+            {
+                yield return null; // 等待输入时帧等待
+                if (state.cts.Token.IsCancellationRequested) break; // 被取消则退出循环
+            }
+
+            // 计算当前实际打字间隔（快进时速度×10）
+            currentDelay = state.settings.baseDelay / (state.isFastForward ? 10f : state.currentSpeedScale);
+
+            // 时间累积逻辑：修复低帧率下打字间隔不准的问题
+            state.elapsedSinceLastChar += Time.deltaTime;
+            while (state.elapsedSinceLastChar >= currentDelay && state.currentCharIndex < totalVisibleChars
+                   && !state.IsPaused && !state.isPausing && !state.waitingForInput)
+            {
+                // 播放下一个字符
+                state.currentCharIndex++;
+                // 更新文本渲染器显示范围
+                textRenderer.UpdateVisibleRange(state.currentCharIndex, state.parsedText);
+                // 处理当前字符对应的控制事件
+                ProcessEventsForCurrentChar(state);
+
+                // 播放打字音效（空值防护 + 配置开关）
+                if (state.settings.playTypeSound && soundController != null)
+                {
+                    soundController.PlayTypeSound();
+                }
+
+                // 扣除已消耗的时间（剩余时间累积到下一帧）
+                state.elapsedSinceLastChar -= currentDelay;
+            }
+
+            yield return null; // 帧等待：避免协程占用过多性能
+        }
+
+        // 文本播放完成逻辑（未被取消时执行）
+        if (!state.cts.Token.IsCancellationRequested)
+        {
+            // 显示全部文本（避免字符遗漏）
+            textRenderer.ShowInstant(state.parsedText.plainText);
+            // 停止所有打字音效（文本完成后不再播放）
+            soundController?.StopAllSoundsOnTextComplete();
+
+            // 自动触发完成事件（根据配置）
+            if (state.settings.autoAdvanceOnComplete)
+            {
+                OnTextComplete?.Invoke();
+            }
+        }
+
+        // 清理播放状态 + 重置协程引用
+        CleanupPlayState(state);
+        typingCoroutine = null;
+        currentPlayState = null;
+    }
+#endregion
+
+    // 处理当前字符的事件（指针遍历，高效且不重复）
+    private void ProcessEventsForCurrentChar(TextPlayState state)
+    {
+        if (state.parsedText.events == null || state.nextEventIndex >= state.parsedText.events.Count)
+            return;
+
+        // 处理所有索引等于当前字符的未触发事件
+        while (state.nextEventIndex < state.parsedText.events.Count)
+        {
+            var evt = state.parsedText.events[state.nextEventIndex];
+
+            // 事件索引超过当前字符，停止处理
+            if (evt.index > state.currentCharIndex)
+                break;
+
+            // 跳过已触发的事件
+            if (evt.isTriggered)
+            {
+                state.nextEventIndex++;
+                continue;
+            }
+
+            // 处理事件
+            switch (evt.type)
+            {
+                case ControlEventType.Pause:
+                    StartCoroutine(HandlePauseEvent(state, evt.value));
+                    break;
+                case ControlEventType.SpeedChange:
+                    state.currentSpeedScale = Mathf.Max(0.01f, evt.value);
+                    break;
+                case ControlEventType.WaitForInput:
+                    state.waitingForInput = true;
+                    OnWaitForInput?.Invoke();
+                    break;
+            }
+
+            // 标记为已触发并移动指针
+            evt.isTriggered = true;
+            state.nextEventIndex++;
+        }
+    }
+
+    /// <summary>
+    /// 处理暂停事件（使用计数器解决嵌套暂停竞态问题）
+    /// </summary>
+    /// <param name="state">当前播放状态</param>
+    /// <param name="pauseTime">暂停时长（秒）</param>
+    /// <returns>协程迭代器</returns>
+    private IEnumerator HandlePauseEvent(TextPlayState state, float pauseTime)
+    {
+        // 空值/无效时长防护
+        if (state == null || pauseTime <= 0) yield break;
+
+        // 标记暂停状态 + 增加暂停请求计数（支持嵌套暂停）
+        state.isPausing = true;
+        state.AddPauseRequest();
+
+        // 实际等待指定时长（帧更新，支持中途取消）
+        float elapsed = 0;
+        while (elapsed < pauseTime && !state.cts.Token.IsCancellationRequested)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // 恢复播放：减少暂停请求计数 + 重置暂停状态
+        state.RemovePauseRequest();
+        state.isPausing = false;
+    }
+
+    // 跳过当前文本（区分硬跳过/软跳过）
+    /// <summary>
+    /// 跳过当前文本
+    /// </summary>
+    /// <param name="isHardSkip">是否硬跳过（跳过所有等待，直接完成）</param>
+    public void SkipCurrent(bool isHardSkip = true)
+    {
+        if (currentPlayState == null || !currentPlayState.settings.allowSkip)
+            return;
+
+        soundController?.StopAllPendingSounds();
+
+        if (isHardSkip)
+        {
+            // 硬跳过：直接显示全部，触发完成事件，忽略等待
+            textRenderer.ShowInstant(currentPlayState.parsedText.plainText);
+
+            if (currentPlayState.waitingForInput && currentPlayState.settings.skipWaitOnHardSkip)
+            {
+                currentPlayState.waitingForInput = false;
+                OnResumeFromWait?.Invoke();
+            }
+
+            if (typingCoroutine != null)
+            {
+                StopCoroutine(typingCoroutine);
+                typingCoroutine = null;
+            }
+
+            OnTextComplete?.Invoke();
+            CleanupPlayState(currentPlayState);
+            currentPlayState = null;
         }
         else
         {
-            FindDialogueTextComponent();
+            // 软跳过：加速播放，保留等待输入逻辑
+            currentPlayState.isFastForward = true;
         }
     }
 
-    private GameObject FindDialogueWindowInScene()
+    /// <summary>
+    /// 暂停文本播放（仅暂停计时，不影响等待输入状态）
+    /// </summary>
+    public void Pause()
     {
-        Scene targetScene = string.IsNullOrEmpty(_targetSceneName)
-            ? SceneManager.GetActiveScene()
-            : SceneManager.GetSceneByName(_targetSceneName);
-
-        if (!targetScene.isLoaded)
+        if (currentPlayState != null && !currentPlayState.waitingForInput)
         {
-            Debug.LogWarning($"目标场景【{_targetSceneName}】未加载，将使用原有查找逻辑", this);
-            return null;
-        }
-
-        GameObject[] sceneRoots = targetScene.GetRootGameObjects();
-        foreach (GameObject root in sceneRoots)
-        {
-            if (root.name == _dialogueWindowName)
-            {
-                return root;
-            }
-            Transform windowTrans = FindChildRecursive(root.transform, _dialogueWindowName);
-            if (windowTrans != null)
-            {
-                return windowTrans.gameObject;
-            }
-        }
-
-        Debug.LogWarning($"场景【{targetScene.name}】中未找到【{_dialogueWindowName}】物体，将使用原有查找逻辑", this);
-        return null;
-    }
-
-    private void FindDialogueTextInWindow(GameObject dialogueWindow)
-    {
-        Transform textTrans = FindChildRecursive(dialogueWindow.transform, _dialogueTextPath);
-        if (textTrans != null)
-        {
-            _dialogueTextComponent = textTrans.GetComponent<TextMeshProUGUI>();
-        }
-
-        if (_dialogueTextComponent == null)
-        {
-            Debug.LogError($"在【{_dialogueWindowName}】中未找到【{_dialogueTextPath}】上的TextMeshProUGUI组件！", this);
+            currentPlayState.AddPauseRequest();
         }
     }
 
-    private void FindDialogueTextComponent()
+    /// <summary>
+    /// 恢复文本播放（恢复计时暂停 + 恢复等待输入状态）
+    /// </summary>
+    public void Resume()
     {
-        Transform targetTrans = transform.Find(_dialogueTextPath);
-        if (targetTrans == null)
-        {
-            targetTrans = FindChildRecursive(transform, _dialogueTextPath);
-        }
+        if (currentPlayState == null) return;
 
-        if (targetTrans != null)
-        {
-            _dialogueTextComponent = targetTrans.GetComponent<TextMeshProUGUI>();
-        }
+        // 恢复计时暂停
+        currentPlayState.pauseRequestCount = 0;
 
-        if (_dialogueTextComponent == null)
+        // 恢复输入等待
+        if (currentPlayState.waitingForInput)
         {
-            Debug.LogError($"TextRenderer未找到【{_dialogueTextPath}】上的TextMeshProUGUI组件！", this);
+            currentPlayState.waitingForInput = false;
+            OnResumeFromWait?.Invoke();
         }
     }
 
-    private Transform FindChildRecursive(Transform parent, string childName)
+    /// <summary>
+    /// 强制终止当前文本播放（清空状态 + 停止协程）
+    /// </summary>
+    public void AbortCurrent()
     {
-        foreach (Transform child in parent)
+        if (typingCoroutine != null)
         {
-            if (child.name == childName)
-            {
-                return child;
-            }
-            Transform grandChild = FindChildRecursive(child, childName);
-            if (grandChild != null)
-            {
-                return grandChild;
-            }
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
         }
-        return null;
+
+        if (currentPlayState != null)
+        {
+            CleanupPlayState(currentPlayState);
+            currentPlayState = null;
+        }
+        soundController?.StopAllPendingSounds();
+
+        textRenderer.Clear();
+    }
+
+    /// <summary>
+    /// 设置快进模式（加速播放文本）
+    /// </summary>
+    /// <param name="enabled">是否开启快进</param>
+    public void SetFastForward(bool enabled)
+    {
+        if (currentPlayState != null)
+        {
+            currentPlayState.isFastForward = enabled;
+        }
+    }
+
+    #region 辅助方法
+    /// <summary>
+    /// 清理播放状态：释放 CancellationTokenSource 资源
+    /// </summary>
+    /// <param name="state">待清理的播放状态</param>
+    private void CleanupPlayState(TextPlayState state)
+    {
+        if (state.cts != null)
+        {
+            state.cts.Cancel();
+            state.cts.Dispose();
+            state.cts = null;
+        }
     }
     #endregion
 
-    // 编辑器校验
-    private void OnValidate()
+    #region 辅助接口
+    /// <summary>
+    /// 恢复等待输入状态（专门用于处理WaitForInput事件）
+    /// </summary>
+    public void ResumeFromWait()
     {
-        if (string.IsNullOrEmpty(_dialogueTextPath))
+        if (currentPlayState != null && currentPlayState.waitingForInput)
         {
-            _dialogueTextPath = "DialogueText";
-            Debug.LogWarning("DialogueText路径不能为空，已重置为默认值", this);
-        }
-
-        if (string.IsNullOrEmpty(_dialogueWindowName))
-        {
-            _dialogueWindowName = "DialogueWindow";
-            Debug.LogWarning("DialogueWindow名称不能为空，已重置为默认值", this);
+            currentPlayState.waitingForInput = false;
+            OnResumeFromWait?.Invoke();
         }
     }
-
-    // 请根据你的实际代码，补充ParsedText类的定义（如果未定义）
-    // 示例ParsedText类（你需要替换为项目中实际的定义）
-    public class ParsedText
-    {
-        public string Text { get; set; } // 核心字符串属性，替换为你实际的属性名
-        // 其他可能的属性：如标签、样式、解析后的格式等
-    }
+    #endregion
 }

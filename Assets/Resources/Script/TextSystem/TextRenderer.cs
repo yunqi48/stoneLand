@@ -2,13 +2,19 @@ using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TextRenderer : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI tmpText; // TMP文本组件
-    public TextMeshProUGUI TmpText => tmpText; // 适配DialogueWindow的公开属性
+    [SerializeField] private TextMeshProUGUI tmpText;
+    public TextMeshProUGUI TmpText => tmpText;
 
-    // 新增：公开富文本状态（便于上层判断）
+    [Header("Scene Auto Binding")]
+    [SerializeField] private bool useSceneBinding = false;
+    [SerializeField] private string targetSceneName = "";
+    [SerializeField] private string dialogueWindowName = "DialogueWindow";
+    [SerializeField] private string dialogueTextPath = "DialogueText";
+
     public bool IsRichTextEnabled => tmpText != null && tmpText.richText;
 
     private readonly Stack<string> _openRichTags = new Stack<string>();
@@ -25,23 +31,91 @@ public class TextRenderer : MonoBehaviour
 
     private void Awake()
     {
-        // 自动查找TMP组件（空值防护）
+        if (tmpText == null && useSceneBinding)
+        {
+            TryBindTmpTextFromScene();
+        }
+
         if (tmpText == null)
         {
             tmpText = GetComponent<TextMeshProUGUI>();
 
-            // 日志提示：便于调试未绑定的情况
             if (tmpText == null)
             {
-                Debug.LogError($"[{gameObject.name}] TextRenderer未找到TextMeshProUGUI组件！", this);
+                Transform child = FindChildRecursive(transform, dialogueTextPath);
+                if (child != null)
+                {
+                    tmpText = child.GetComponent<TextMeshProUGUI>();
+                }
+            }
+
+            if (tmpText == null)
+            {
+                Debug.LogError($"[{gameObject.name}] TextRenderer could not find TextMeshProUGUI.", this);
             }
         }
     }
 
-    // 解析富文本标签，跟踪未闭合的标签（新增空值防护）
+    private void TryBindTmpTextFromScene()
+    {
+        Scene targetScene = string.IsNullOrWhiteSpace(targetSceneName)
+            ? SceneManager.GetActiveScene()
+            : SceneManager.GetSceneByName(targetSceneName);
+
+        if (!targetScene.isLoaded)
+        {
+            Debug.LogWarning($"[{gameObject.name}] target scene not loaded: {targetSceneName}", this);
+            return;
+        }
+
+        foreach (GameObject root in targetScene.GetRootGameObjects())
+        {
+            Transform windowTransform = root.name == dialogueWindowName
+                ? root.transform
+                : FindChildRecursive(root.transform, dialogueWindowName);
+
+            if (windowTransform == null)
+            {
+                continue;
+            }
+
+            Transform dialogueTextTransform = FindChildRecursive(windowTransform, dialogueTextPath);
+            if (dialogueTextTransform == null)
+            {
+                continue;
+            }
+
+            tmpText = dialogueTextTransform.GetComponent<TextMeshProUGUI>();
+            if (tmpText != null)
+            {
+                return;
+            }
+        }
+
+        Debug.LogWarning($"[{gameObject.name}] Could not bind TMP from scene '{targetScene.name}' via {dialogueWindowName}/{dialogueTextPath}.", this);
+    }
+
+    private Transform FindChildRecursive(Transform parent, string childName)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == childName)
+            {
+                return child;
+            }
+
+            Transform nested = FindChildRecursive(child, childName);
+            if (nested != null)
+            {
+                return nested;
+            }
+        }
+
+        return null;
+    }
+
     private string ParseAndTrackRichTags(string text, bool trackOpenTags)
     {
-        // 空值防护：tmpText为null时直接返回原文本
         if (tmpText == null || !tmpText.richText) return text;
 
         StringBuilder processedText = new StringBuilder();
@@ -57,20 +131,16 @@ public class TextRenderer : MonoBehaviour
                 string tag = text.Substring(index, endIndex - index + 1);
                 processedText.Append(tag);
 
-                // 处理开始标签
                 if (!tag.StartsWith("</") && trackOpenTags)
                 {
-                    // 提取标签类型（如 <color=#fff> -> <color）
                     string tagType = tag.Split('=')[0];
                     if (_closingTags.ContainsKey(tagType))
                     {
                         _openRichTags.Push(tagType);
                     }
                 }
-                // 处理结束标签
                 else if (tag.StartsWith("</") && trackOpenTags)
                 {
-                    // 匹配对应的开始标签并弹出
                     foreach (var kvp in _closingTags)
                     {
                         if (tag == kvp.Value && _openRichTags.Count > 0 && _openRichTags.Peek() == kvp.Key)
@@ -93,7 +163,6 @@ public class TextRenderer : MonoBehaviour
         return processedText.ToString();
     }
 
-    // 闭合所有未关闭的富文本标签
     private string CloseOpenRichTags()
     {
         StringBuilder closeTags = new StringBuilder();
@@ -108,12 +177,11 @@ public class TextRenderer : MonoBehaviour
         return closeTags.ToString();
     }
 
-    // 直接设置文本（立即显示）- 新增空值防护
     public void SetText(string processedText)
     {
         if (tmpText == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] tmpText为null，无法设置文本", this);
+            Debug.LogWarning($"[{gameObject.name}] tmpText is null, cannot set text.", this);
             return;
         }
 
@@ -122,12 +190,11 @@ public class TextRenderer : MonoBehaviour
         tmpText.ForceMeshUpdate();
     }
 
-    // 更新可见字符范围（显示前N个字符）- 修复富文本剪断问题（新增空值防护）
     public void UpdateVisibleRange(int charCount, ParsedText parsedText)
     {
         if (tmpText == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] tmpText为null，无法更新可见范围", this);
+            Debug.LogWarning($"[{gameObject.name}] tmpText is null, cannot update visible range.", this);
             return;
         }
 
@@ -135,31 +202,26 @@ public class TextRenderer : MonoBehaviour
         {
             _openRichTags.Clear();
             tmpText.text = "";
-            tmpText.ForceMeshUpdate(); // 新增：强制更新
+            tmpText.ForceMeshUpdate();
             return;
         }
 
-        // 空值防护：parsedText为null时直接返回
         if (parsedText == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] ParsedText为null，无法更新可见范围", this);
+            Debug.LogWarning($"[{gameObject.name}] ParsedText is null, cannot update visible range.", this);
             return;
         }
 
-        // 获取实际要显示的字符索引
         int displayIndex = parsedText.plainText.Length;
         if (charCount > 0 && parsedText.charMapping.ContainsKey(charCount - 1))
         {
             displayIndex = parsedText.charMapping[charCount - 1] + 1;
         }
 
-        // 截取并显示文本
         if (displayIndex > 0 && displayIndex <= parsedText.plainText.Length)
         {
             string visibleText = parsedText.plainText.Substring(0, displayIndex);
-            // 解析并跟踪富文本标签
             visibleText = ParseAndTrackRichTags(visibleText, true);
-            // 闭合未完成的标签
             visibleText += CloseOpenRichTags();
 
             tmpText.text = visibleText;
@@ -167,12 +229,11 @@ public class TextRenderer : MonoBehaviour
         tmpText.ForceMeshUpdate();
     }
 
-    // 立即显示全部文本（新增空值防护）
     public void ShowInstant(string fullText)
     {
         if (tmpText == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] tmpText为null，无法立即显示文本", this);
+            Debug.LogWarning($"[{gameObject.name}] tmpText is null, cannot show text instantly.", this);
             return;
         }
 
@@ -181,17 +242,16 @@ public class TextRenderer : MonoBehaviour
         tmpText.ForceMeshUpdate();
     }
 
-    // 清空文本（优化：添加ForceMeshUpdate）
     public void Clear()
     {
         if (tmpText == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] tmpText为null，无法清空文本", this);
+            Debug.LogWarning($"[{gameObject.name}] tmpText is null, cannot clear text.", this);
             return;
         }
 
         _openRichTags.Clear();
         tmpText.text = "";
-        tmpText.ForceMeshUpdate(); // 新增：强制更新网格，避免残留
+        tmpText.ForceMeshUpdate();
     }
 }
