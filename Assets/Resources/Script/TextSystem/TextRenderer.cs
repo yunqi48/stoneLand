@@ -42,6 +42,12 @@ public class TextRenderer : MonoBehaviour
 
             if (tmpText == null)
             {
+                // 兼容：TextRenderer 挂在容器节点上，TMP 在子物体（例如 DialogueText/Text）
+                tmpText = GetComponentInChildren<TextMeshProUGUI>(true);
+            }
+
+            if (tmpText == null)
+            {
                 Transform child = FindChildRecursive(transform, dialogueTextPath);
                 if (child != null)
                 {
@@ -51,7 +57,14 @@ public class TextRenderer : MonoBehaviour
 
             if (tmpText == null)
             {
-                Debug.LogError($"[{gameObject.name}] TextRenderer could not find TextMeshProUGUI.", this);
+                // 这里不直接报错：有些场景会把 TextRenderer 挂在“逻辑对象”上，
+                // TMP 文本可能在别的对象/运行时才绑定。真正用到时（SetText/Clear）会再次提示。
+                Debug.LogWarning(
+                    $"[{gameObject.name}] TextRenderer could not find TextMeshProUGUI. " +
+                    $"请在 Inspector 给 tmpText 赋值，或开启 useSceneBinding 并配置正确路径，" +
+                    $"或把 TextRenderer 挂到包含 TMP 的 UI 物体上。",
+                    this
+                );
             }
         }
     }

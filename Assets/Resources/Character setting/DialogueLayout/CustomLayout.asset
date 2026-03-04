@@ -9,15 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 922f7dc36524168448a9bb925193593e, type: 3}
-  m_Name: Layout_Center
+  m_Script: {fileID: 11500000, guid: bda489922766d404c9fdeca60daeee42, type: 3}
+  m_Name: CustomLayout
   m_EditorClassIdentifier: 
-  layoutId: Layout_Center
-  anchorMin: {x: 0.2, y: 0.1}
-  anchorMax: {x: 0.8, y: 0.3}
+  layoutType: 4
+  anchorMin: {x: 0.5, y: 0}
+  anchorMax: {x: 0.5, y: 0}
   pivot: {x: 0.5, y: 0}
-  anchoredPosition: {x: 0, y: 0}
-  sizeDelta: {x: 0, y: 0}
+  anchoredPosition: {x: 0, y: 100}
+  sizeDelta: {x: 1600, y: 400}
+  useAvatar: 1
+  avatarOffset: {x: -650, y: 0}
+  avatarSize: {x: 256, y: 256}
   mirrorAvatar: 0
-  avatarSize: {x: 80, y: 80}
-  avatarOffset: {x: -40, y: 0}

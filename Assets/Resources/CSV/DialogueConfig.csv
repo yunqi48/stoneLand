@@ -1,110 +1,110 @@
-﻿NodeID,SpeakerName,Text,TypingSpeed,ShowImage,AutoNext,JumpMode,NextNodeID,ConditionKey,ConditionValue,Choice1Target,Choice1CondKey,Choice1CondVal,Choice2Text,Choice2Target,Choice2CondKey,Choice2CondVal
-N001,云柒,你好，这里是云柒,30,TRUE,TRUE,ManualClick,N002,,,,,,,,,
-N002,云柒,在寒假没事干的时候，突然想使用unity来制作视觉小说,30,TRUE,TRUE,ManualClick,N003,,,,,,,,,
-N003,云柒,也就是俗称的galgame,30,TRUE,TRUE,ManualClick,N004,,,,,,,,,
-N004,云柒,但是我的开发知识已经忘干净了,30,TRUE,TRUE,ManualClick,N005,,,,,,,,,
-N005,云柒,所以我决定在ai的帮助下进行游戏开发,30,TRUE,TRUE,ManualClick,N006,,,,,,,,,
-N006,云柒,现在，让我为大家介绍一下两个帮手,30,TRUE,TRUE,ManualClick,N007,,,,,,,,,
-N007,云柒,豆包跟GPT,30,TRUE,TRUE,ManualClick,N008,,,,,,,,,
-N008,豆包,我是豆包，是字节跳动公司基于自研的 Seed 大模型基座独立研发训练的人工智能，能为你提供多方面的信息解答和能力支持～,30,TRUE,TRUE,ManualClick,N009,,,,,,,,,
-N009,GPT,我是GPT（生成式预训练变换器，Generative Pre-trained Transformer）是由OpenAI 等机构发展的一类大型语言模型，能理解和生成自然语言与代码。,30,TRUE,TRUE,ManualClick,N010,,,,,,,,,
-N010,云柒,这就是我在开发时的两位助手,30,TRUE,TRUE,ManualClick,N011,,,,,,,,,
-N011,云柒,目前对话系统在两个ai的帮助下已经实现了两个功能,30,TRUE,TRUE,ManualClick,N012,,,,,,,,,
-N012,云柒,例如说展示立绘,30,TRUE,TRUE,ManualClick,N013,,,,,,,,,
-N013,云柒,进行线性对话,30,TRUE,TRUE,ManualClick,N014,,,,,,,,,
-N014,云柒,仅仅是实现这两个功能就很费劲了,30,TRUE,TRUE,ManualClick,N015,,,,,,,,,
-N015,云柒,而这两个功能,30,TRUE,TRUE,ManualClick,N016,,,,,,,,,
-N016,云柒,足足用了15个脚本#苦笑,30,TRUE,TRUE,ManualClick,N017,,,,,,,,,
-N017,云柒,而问题远远不止这些,30,TRUE,TRUE,ManualClick,N018,,,,,,,,,
-N018,云柒,豆包属于是我能写出代码，能跑出功能来,30,TRUE,TRUE,ManualClick,N019,,,,,,,,,
-N019,云柒,写这些之就把你之前的功能写没了,30,TRUE,TRUE,ManualClick,N020,,,,,,,,,
-N020,云柒,GPT是只能提意见，这个地方能用什么实现，改不了大篇幅代码（受制于某些原因）,30,TRUE,TRUE,ManualClick,N021,,,,,,,,,
-N021,云柒,于是乎就写出来一堆不可名状的代码,30,TRUE,TRUE,ManualClick,N022,,,,,,,,,
-N022,云柒,例如说一个方法中对一个变量三次检查是否为空,30,TRUE,TRUE,ManualClick,N023,,,,,,,,,
-N023,豆包,我要仔细验牌,30,TRUE,TRUE,ManualClick,N024,,,,,,,,,
-N024,云柒,还有在设置图片位置时变量左手倒右手，右手倒左手，最后弄不出去直接弄个默认值给我糊弄上去了,30,TRUE,TRUE,ManualClick,N025,,,,,,,,,
-N025,云柒,这种小错误出的很多,30,TRUE,TRUE,ManualClick,N026,,,,,,,,,
-N026,云柒,但是起码能跑，我觉得还是要夸奖一下的,30,TRUE,TRUE,ManualClick,N027,,,,,,,,,
-N027,豆包,感谢您的夸奖,30,TRUE,TRUE,ManualClick,N028,,,,,,,,,
-N028,云柒,您是真不客气,30,TRUE,TRUE,ManualClick,N029,,,,,,,,,
-N029,云柒,豆包的神鬼二相性我是真的不敢恭维,30,TRUE,TRUE,ManualClick,N030,,,,,,,,,
-N030,云柒,所以在后面开发的时候我必须明确我需要的功能，尽量描述清楚,30,TRUE,TRUE,ManualClick,N031,,,,,,,,,
-N031,云柒,就像这个对话系统，我们需要什么功能哩？,30,TRUE,TRUE,ManualClick,N032,,,,,,,,,
-N032,云柒,比如说现在的对话，我的任务立绘能不能控制位置,30,TRUE,TRUE,ManualClick,N033,,,,,,,,,
-N033,云柒,等等等等，我目前是一头雾水,30,TRUE,TRUE,ManualClick,N034,,,,,,,,,
-N034,云柒,GPT，针对于使用unity制作视觉小说的对话系统，我应该实现哪些功能，优先做什么功能？,30,TRUE,TRUE,ManualClick,N035,,,,,,,,,
-N035,GPT,核心功能（优先级：高 — 必须先做）,30,TRUE,TRUE,ManualClick,N036,,,,,,,,,
-N036,GPT,1.文本显示系统：支持逐字（或逐字符）打字效果、控制速度、立即显示（跳过/快进）,30,TRUE,TRUE,ManualClick,N037,,,,,,,,,
-N037,GPT,2.对话框与角色名显示：可配置位置/样式、支持不同角色名显示与颜色,30,TRUE,TRUE,ManualClick,N038,,,,,,,,,
-N038,GPT,3.分支选择（分支对话/分支选项）支持多个选项、返回选项结果、界面可定制,30,TRUE,TRUE,ManualClick,N039,,,,,,,,,
-N039,GPT,4.对话脚本与数据结构：使用外部脚本（JSON、YAML、CSV 或自定义脚本语言）或 ScriptableObject 存储对话内容、分支与变量，便于编辑与本地化,30,TRUE,TRUE,ManualClick,N040,,,,,,,,,
-N040,GPT,5.场景与角色立绘管理：加载/切换角色立绘（show/hide、前后顺序、淡入淡出）、背景图切换,30,TRUE,TRUE,ManualClick,N041,,,,,,,,,
-N041,GPT,6.音频支持：文字音效（type sound）、背景音乐(BGM)、音效(SE)，支持淡入淡出与切换,30,TRUE,TRUE,ManualClick,N042,,,,,,,,,
-N042,GPT,7.保存/读取（存档系统）支持多个存档、保存当前对话指针与状态变量、截图/缩略图（可选）,30,TRUE,TRUE,ManualClick,N043,,,,,,,,,
-N043,云柒,━━━∑(?□?*川━,30,TRUE,TRUE,ManualClick,N044,,,,,,,,,
-N044,云柒,#很快啊，嘎巴一下就死了,30,TRUE,TRUE,ManualClick,N045,,,,,,,,,
-N045,云柒,就目前来讲,30,TRUE,TRUE,ManualClick,N046,,,,,,,,,
-N046,云柒,文本显示系统做完了，对话框做完了，对话文本是使用csv文件存储的，也算是基本实现了,30,TRUE,TRUE,ManualClick,N047,,,,,,,,,
-N047,云柒,存档文件有一个半成品，勉强能用,30,TRUE,TRUE,ManualClick,N048,,,,,,,,,
-N048,云柒,剩下基本没做,30,TRUE,TRUE,ManualClick,N049,,,,,,,,,
-N049,云柒,XD,30,TRUE,TRUE,ManualClick,N050,,,,,,,,,
-N050,云柒,更不用说脚本的耦合度了,30,TRUE,TRUE,ManualClick,N051,,,,,,,,,
-N051,GPT,增强功能（优先级：中 — 完成核心后实现）,30,TRUE,TRUE,ManualClick,N052,,,,,,,,,
-N052,云柒,？,30,TRUE,TRUE,ManualClick,N053,,,,,,,,,
-N053,GPT,8.支持变量（好感度、标记等）和基于变量的分支与条件显示,30,TRUE,TRUE,ManualClick,N054,,,,,,,,,
-N054,GPT,9.动画与表情切换：角色立绘的面部表情切换、简单骨骼/动画（如呼吸、眨眼）,30,TRUE,TRUE,ManualClick,N055,,,,,,,,,
-N055,GPT,10.界面过渡与视觉效果：屏幕淡入淡出、文字/对话框过渡、镜头推拉基础,30,TRUE,TRUE,ManualClick,N056,,,,,,,,,
-N056,GPT,11.多语言/本地化支持：文本资源分离、字体与排版适配,30,TRUE,TRUE,ManualClick,N057,,,,,,,,,
-N057,GPT,12.快速跳过/自动播放模式：自动推进对话、可视化跳过进度与黑名单（已读/未读区分）,30,TRUE,TRUE,ManualClick,N058,,,,,,,,,
-N058,GPT,13,30,TRUE,TRUE,ManualClick,N059,,,,,,,,,
-N059,云柒,ok，师傅别念了,30,TRUE,TRUE,ManualClick,N060,,,,,,,,,
-N060,云柒,已经想放弃了…...,30,TRUE,TRUE,ManualClick,N061,,,,,,,,,
-N061,云柒,但是已经开始做，那就尽力的去做吧,30,TRUE,TRUE,ManualClick,N062,,,,,,,,,
-N062,云柒,至少要把对话系统做完,30,TRUE,TRUE,ManualClick,N063,,,,,,,,,
-N063,云柒,另外我决定将制作的过程录制下来,30,TRUE,TRUE,ManualClick,N064,,,,,,,,,
-N064,云柒,一是为了当成开发日志来用,30,TRUE,TRUE,ManualClick,N065,,,,,,,,,
-N065,云柒,二是为了赚点小钱，万一视频有人看哩,30,TRUE,TRUE,ManualClick,N066,,,,,,,,,
-N066,云柒,三是为了给后来开发者一个可以借鉴的思路吧,30,TRUE,TRUE,ManualClick,N067,,,,,,,,,
-N067,云柒,四也是最主要的，给后来的云柒做一个念想,30,TRUE,TRUE,ManualClick,N068,,,,,,,,,
-N068,云柒,在老的时候还能回忆回忆过去,30,TRUE,TRUE,ManualClick,N069,,,,,,,,,
-N069,云柒,至少咱年轻的时候也疯狂过,30,TRUE,TRUE,ManualClick,N070,,,,,,,,,
-N070,云柒,这都是后话，或许我根本撑不到发出第一个视频的那天,30,TRUE,TRUE,ManualClick,N071,,,,,,,,,
-N071,云柒,尽力而为,30,TRUE,TRUE,ManualClick,N072,,,,,,,,,
-N072,云柒,现在，我要开始介绍一下目前的项目,30,TRUE,TRUE,ManualClick,N073,,,,,,,,,
-N073,云柒,但在介绍项目之前，先来简单介绍一下我所使用的unity界面,30,TRUE,TRUE,ManualClick,N074,,,,,,,,,
-N074,云柒,左边的Hierarchy是层级窗口，本质上是场景中所有游戏对象（GameObject）的可视化层级管理器,30,TRUE,TRUE,ManualClick,N075,,,,,,,,,
-N075,云柒,SampleScene是当前场景的名称，下面是场景内的所有游戏对象，我们从上到下进行介绍,30,TRUE,TRUE,ManualClick,N076,,,,,,,,,
-N076,云柒,Main Camera：主摄像机，主要用来显示游戏场景,30,TRUE,TRUE,ManualClick,N077,,,,,,,,,
-N077,云柒,Directional Light：Unity 里模拟太阳光 / 月光的核心光源，光线为平行射线，来自无限远，与位置无关，靠旋转控制方向,30,TRUE,TRUE,ManualClick,N078,,,,,,,,,
-N078,云柒,Canvas：画布，存储所有ui对象的对象,30,TRUE,TRUE,ManualClick,N079,,,,,,,,,
-N079,云柒,Canvas中分别有6个子物体看名字也大概能猜出他们是用来干啥的,30,TRUE,TRUE,ManualClick,N080,,,,,,,,,
-N080,云柒,SpeakNameLamge：是显示发言者立绘的ui,30,TRUE,TRUE,ManualClick,N081,,,,,,,,,
-N081,云柒,SpeakNameText：是显示发言者名称的ui,30,TRUE,TRUE,ManualClick,N082,,,,,,,,,
-N082,云柒,DialogBoxArea：是对话框的背景,30,TRUE,TRUE,ManualClick,N083,,,,,,,,,
-N083,云柒,DirectionalText：是显示发言者内容的ui,30,TRUE,TRUE,ManualClick,N084,,,,,,,,,
-N084,云柒,choicePanel ：暂时没用，是用来存储分支结构的面板,30,TRUE,TRUE,ManualClick,N085,,,,,,,,,
-N085,云柒,DialogueSystem ：对话系统的核心，管控所有对话系统（为什么在这里你别管）,30,TRUE,TRUE,ManualClick,N086,,,,,,,,,
-N086,云柒,EventSystem：是处理 UI 交互、输入事件的核心组件，没有它，按钮、滑块、拖拽等 UI 操作全都会失效。,30,TRUE,TRUE,ManualClick,N087,,,,,,,,,
-N087,云柒,GlobalManager：使用inputsystem管理外界输入输出的东西,30,TRUE,TRUE,ManualClick,N088,,,,,,,,,
-N088,云柒,介绍完Hierarchy界面，我们再来介绍下面的Project界面,30,TRUE,TRUE,ManualClick,N089,,,,,,,,,
-N089,云柒,Project：是项目资源的总管理器，类似文件资源管理器，负责组织、导入、查找项目中所有的 Asset，是开发中获取资源的核心入口Unity,30,TRUE,TRUE,ManualClick,N090,,,,,,,,,
-N090,云柒,游戏中用的所有素材，脚本，预制体之类的都存储在这里,30,TRUE,TRUE,ManualClick,N091,,,,,,,,,
-N091,云柒,Resources文件夹：是一个特殊的资源目录，核心作用是通过脚本动态加载资源，是项目中 “按需加载” 资源的核心通道,30,TRUE,TRUE,ManualClick,N092,,,,,,,,,
-N092,云柒,StreamingAssets文件夹：存放无需 Unity 导入处理、可在运行时直接访问的原生文件，比如配置文件、视频、自定义数据等,30,TRUE,TRUE,ManualClick,N093,,,,,,,,,
-N093,云柒,TextMesh Pro是unity制作的高清字体（可以这么理解）,30,TRUE,TRUE,ManualClick,N094,,,,,,,,,
-N094,云柒,而在Project的两侧分别是Animation和Console,30,TRUE,TRUE,ManualClick,N095,,,,,,,,,
-N095,云柒,Animation：动画系统 是让角色、物体 “动起来” 的核心工具,30,TRUE,TRUE,ManualClick,N096,,,,,,,,,
-N096,云柒,Console：控制台是调试、排错、日志查看的核心窗口，所有代码的 Debug.Log 输出、报错、警告、打包信息都会集中在这里显示,30,TRUE,TRUE,ManualClick,N097,,,,,,,,,
-N097,云柒,视角回到中间，我们能看见Scene Game Animator,30,TRUE,TRUE,ManualClick,N098,,,,,,,,,
-N098,云柒,Scene：场景窗口是游戏的 “关卡 / 界面” 容器，主要功能是调试游戏场景,30,TRUE,TRUE,ManualClick,N099,,,,,,,,,
-N099,云柒,Game：游戏窗口是实时预览游戏最终运行效果的核心窗口”。所有的脚本逻辑、动画、物理、UI 交互，都会在这里实时运行，是测试和调试的最终验证窗口,30,TRUE,TRUE,ManualClick,N100,,,,,,,,,
-N100,云柒,Animator：状态机是控制角色 / 物体动画状态机的核心组件，是实现角色播放、切换、混合动画（比如走、跑、跳、攻击）的唯一官方方案,30,TRUE,TRUE,ManualClick,N101,,,,,,,,,
-N101,云柒,右侧的窗口是整个unity的核心窗口Inspector,,,,,,,,,,,,,,
-N102,云柒,Inspector：检查器窗口 是查看和修改选中对象所有属性的核心面板，是你开发中修改参数、配置组件的最主要入口,,,,,,,,,,,,,,
-N103,云柒,当你点击任意一个游戏对象后，你就能看见他的详细属性，已经对象上挂接的组件,,,,,,,,,,,,,,
-N104,云柒,例如说SpeakNameLamge游戏对象，他有RectTransform组件 CanvasRenderer组件 image组件,,,,,,,,,,,,,,
-N105,云柒,具体是干什么都我就不多说了，有兴趣的话可以自己了解一下,,,,,,,,,,,,,,
-N106,云柒,啰嗦了这么多，也该介绍一下项目了,,,,,,,,,,,,,,
-N107,云柒,目前对话系统的所有大头都集中在DialogueRunner这个脚本上,,,,,,,,,,,,,,
-N108,云柒,而仅仅是这个脚本就有惊人的657行代码,,,,,,,,,,,,,,
-N109,云柒,,,,,,,,,,,,,,,
+﻿NodeID,SpeakerName,Text,TypingSpeed,ShowImage,AutoNext,JumpMode,NextNodeID
+N001,云柒,你好，这里是云柒,30,TRUE,TRUE,ManualClick,N002
+N002,云柒,在寒假没事干的时候，突然想使用unity来制作视觉小说,30,TRUE,TRUE,ManualClick,N003
+N003,云柒,也就是俗称的galgame,30,TRUE,TRUE,ManualClick,N004
+N004,云柒,但是我的开发知识已经忘干净了,30,TRUE,TRUE,ManualClick,N005
+N005,云柒,所以我决定在ai的帮助下进行游戏开发,30,TRUE,TRUE,ManualClick,N006
+N006,云柒,现在，让我为大家介绍一下两个帮手,30,TRUE,TRUE,ManualClick,N007
+N007,云柒,豆包跟GPT,30,TRUE,TRUE,ManualClick,N008
+N008,豆包,我是豆包，是字节跳动公司基于自研的 Seed 大模型基座独立研发训练的人工智能，能为你提供多方面的信息解答和能力支持～,30,TRUE,TRUE,ManualClick,N009
+N009,GPT,我是GPT（生成式预训练变换器，Generative Pre-trained Transformer）是由OpenAI 等机构发展的一类大型语言模型，能理解和生成自然语言与代码。,30,TRUE,TRUE,ManualClick,N010
+N010,云柒,这就是我在开发时的两位助手,30,TRUE,TRUE,ManualClick,N011
+N011,云柒,目前对话系统在两个ai的帮助下已经实现了两个功能,30,TRUE,TRUE,ManualClick,N012
+N012,云柒,例如说展示立绘,30,TRUE,TRUE,ManualClick,N013
+N013,云柒,进行线性对话,30,TRUE,TRUE,ManualClick,N014
+N014,云柒,仅仅是实现这两个功能就很费劲了,30,TRUE,TRUE,ManualClick,N015
+N015,云柒,而这两个功能,30,TRUE,TRUE,ManualClick,N016
+N016,云柒,足足用了15个脚本#苦笑,30,TRUE,TRUE,ManualClick,N017
+N017,云柒,而问题远远不止这些,30,TRUE,TRUE,ManualClick,N018
+N018,云柒,豆包属于是我能写出代码，能跑出功能来,30,TRUE,TRUE,ManualClick,N019
+N019,云柒,写这些之就把你之前的功能写没了,30,TRUE,TRUE,ManualClick,N020
+N020,云柒,GPT是只能提意见，这个地方能用什么实现，改不了大篇幅代码（受制于某些原因）,30,TRUE,TRUE,ManualClick,N021
+N021,云柒,于是乎就写出来一堆不可名状的代码,30,TRUE,TRUE,ManualClick,N022
+N022,云柒,例如说一个方法中对一个变量三次检查是否为空,30,TRUE,TRUE,ManualClick,N023
+N023,豆包,我要仔细验牌,30,TRUE,TRUE,ManualClick,N024
+N024,云柒,还有在设置图片位置时变量左手倒右手，右手倒左手，最后弄不出去直接弄个默认值给我糊弄上去了,30,TRUE,TRUE,ManualClick,N025
+N025,云柒,这种小错误出的很多,30,TRUE,TRUE,ManualClick,N026
+N026,云柒,但是起码能跑，我觉得还是要夸奖一下的,30,TRUE,TRUE,ManualClick,N027
+N027,豆包,感谢您的夸奖,30,TRUE,TRUE,ManualClick,N028
+N028,云柒,您是真不客气,30,TRUE,TRUE,ManualClick,N029
+N029,云柒,豆包的神鬼二相性我是真的不敢恭维,30,TRUE,TRUE,ManualClick,N030
+N030,云柒,所以在后面开发的时候我必须明确我需要的功能，尽量描述清楚,30,TRUE,TRUE,ManualClick,N031
+N031,云柒,就像这个对话系统，我们需要什么功能哩？,30,TRUE,TRUE,ManualClick,N032
+N032,云柒,比如说现在的对话，我的任务立绘能不能控制位置,30,TRUE,TRUE,ManualClick,N033
+N033,云柒,等等等等，我目前是一头雾水,30,TRUE,TRUE,ManualClick,N034
+N034,云柒,GPT，针对于使用unity制作视觉小说的对话系统，我应该实现哪些功能，优先做什么功能？,30,TRUE,TRUE,ManualClick,N035
+N035,GPT,核心功能（优先级：高 — 必须先做）,30,TRUE,TRUE,ManualClick,N036
+N036,GPT,1.文本显示系统：支持逐字（或逐字符）打字效果、控制速度、立即显示（跳过/快进）,30,TRUE,TRUE,ManualClick,N037
+N037,GPT,2.对话框与角色名显示：可配置位置/样式、支持不同角色名显示与颜色,30,TRUE,TRUE,ManualClick,N038
+N038,GPT,3.分支选择（分支对话/分支选项）支持多个选项、返回选项结果、界面可定制,30,TRUE,TRUE,ManualClick,N039
+N039,GPT,4.对话脚本与数据结构：使用外部脚本（JSON、YAML、CSV 或自定义脚本语言）或 ScriptableObject 存储对话内容、分支与变量，便于编辑与本地化,30,TRUE,TRUE,ManualClick,N040
+N040,GPT,5.场景与角色立绘管理：加载/切换角色立绘（show/hide、前后顺序、淡入淡出）、背景图切换,30,TRUE,TRUE,ManualClick,N041
+N041,GPT,6.音频支持：文字音效（type sound）、背景音乐(BGM)、音效(SE)，支持淡入淡出与切换,30,TRUE,TRUE,ManualClick,N042
+N042,GPT,7.保存/读取（存档系统）支持多个存档、保存当前对话指针与状态变量、截图/缩略图（可选）,30,TRUE,TRUE,ManualClick,N043
+N043,云柒,━━━∑(?□?*川━,30,TRUE,TRUE,ManualClick,N044
+N044,云柒,#很快啊，嘎巴一下就死了,30,TRUE,TRUE,ManualClick,N045
+N045,云柒,就目前来讲,30,TRUE,TRUE,ManualClick,N046
+N046,云柒,文本显示系统做完了，对话框做完了，对话文本是使用csv文件存储的，也算是基本实现了,30,TRUE,TRUE,ManualClick,N047
+N047,云柒,存档文件有一个半成品，勉强能用,30,TRUE,TRUE,ManualClick,N048
+N048,云柒,剩下基本没做,30,TRUE,TRUE,ManualClick,N049
+N049,云柒,XD,30,TRUE,TRUE,ManualClick,N050
+N050,云柒,更不用说脚本的耦合度了,30,TRUE,TRUE,ManualClick,N051
+N051,GPT,增强功能（优先级：中 — 完成核心后实现）,30,TRUE,TRUE,ManualClick,N052
+N052,云柒,？,30,TRUE,TRUE,ManualClick,N053
+N053,GPT,8.支持变量（好感度、标记等）和基于变量的分支与条件显示,30,TRUE,TRUE,ManualClick,N054
+N054,GPT,9.动画与表情切换：角色立绘的面部表情切换、简单骨骼/动画（如呼吸、眨眼）,30,TRUE,TRUE,ManualClick,N055
+N055,GPT,10.界面过渡与视觉效果：屏幕淡入淡出、文字/对话框过渡、镜头推拉基础,30,TRUE,TRUE,ManualClick,N056
+N056,GPT,11.多语言/本地化支持：文本资源分离、字体与排版适配,30,TRUE,TRUE,ManualClick,N057
+N057,GPT,12.快速跳过/自动播放模式：自动推进对话、可视化跳过进度与黑名单（已读/未读区分）,30,TRUE,TRUE,ManualClick,N058
+N058,GPT,13,30,TRUE,TRUE,ManualClick,N059
+N059,云柒,ok，师傅别念了,30,TRUE,TRUE,ManualClick,N060
+N060,云柒,已经想放弃了…...,30,TRUE,TRUE,ManualClick,N061
+N061,云柒,但是已经开始做，那就尽力的去做吧,30,TRUE,TRUE,ManualClick,N062
+N062,云柒,至少要把对话系统做完,30,TRUE,TRUE,ManualClick,N063
+N063,云柒,另外我决定将制作的过程录制下来,30,TRUE,TRUE,ManualClick,N064
+N064,云柒,一是为了当成开发日志来用,30,TRUE,TRUE,ManualClick,N065
+N065,云柒,二是为了赚点小钱，万一视频有人看哩,30,TRUE,TRUE,ManualClick,N066
+N066,云柒,三是为了给后来开发者一个可以借鉴的思路吧,30,TRUE,TRUE,ManualClick,N067
+N067,云柒,四也是最主要的，给后来的云柒做一个念想,30,TRUE,TRUE,ManualClick,N068
+N068,云柒,在老的时候还能回忆回忆过去,30,TRUE,TRUE,ManualClick,N069
+N069,云柒,至少咱年轻的时候也疯狂过,30,TRUE,TRUE,ManualClick,N070
+N070,云柒,这都是后话，或许我根本撑不到发出第一个视频的那天,30,TRUE,TRUE,ManualClick,N071
+N071,云柒,尽力而为,30,TRUE,TRUE,ManualClick,N072
+N072,云柒,现在，我要开始介绍一下目前的项目,30,TRUE,TRUE,ManualClick,N073
+N073,云柒,但在介绍项目之前，先来简单介绍一下我所使用的unity界面,30,TRUE,TRUE,ManualClick,N074
+N074,云柒,左边的Hierarchy是层级窗口，本质上是场景中所有游戏对象（GameObject）的可视化层级管理器,30,TRUE,TRUE,ManualClick,N075
+N075,云柒,SampleScene是当前场景的名称，下面是场景内的所有游戏对象，我们从上到下进行介绍,30,TRUE,TRUE,ManualClick,N076
+N076,云柒,Main Camera：主摄像机，主要用来显示游戏场景,30,TRUE,TRUE,ManualClick,N077
+N077,云柒,Directional Light：Unity 里模拟太阳光 / 月光的核心光源，光线为平行射线，来自无限远，与位置无关，靠旋转控制方向,30,TRUE,TRUE,ManualClick,N078
+N078,云柒,Canvas：画布，存储所有ui对象的对象,30,TRUE,TRUE,ManualClick,N079
+N079,云柒,Canvas中分别有6个子物体看名字也大概能猜出他们是用来干啥的,30,TRUE,TRUE,ManualClick,N080
+N080,云柒,SpeakNameLamge：是显示发言者立绘的ui,30,TRUE,TRUE,ManualClick,N081
+N081,云柒,SpeakNameText：是显示发言者名称的ui,30,TRUE,TRUE,ManualClick,N082
+N082,云柒,DialogBoxArea：是对话框的背景,30,TRUE,TRUE,ManualClick,N083
+N083,云柒,DirectionalText：是显示发言者内容的ui,30,TRUE,TRUE,ManualClick,N084
+N084,云柒,choicePanel ：暂时没用，是用来存储分支结构的面板,30,TRUE,TRUE,ManualClick,N085
+N085,云柒,DialogueSystem ：对话系统的核心，管控所有对话系统（为什么在这里你别管）,30,TRUE,TRUE,ManualClick,N086
+N086,云柒,EventSystem：是处理 UI 交互、输入事件的核心组件，没有它，按钮、滑块、拖拽等 UI 操作全都会失效。,30,TRUE,TRUE,ManualClick,N087
+N087,云柒,GlobalManager：使用inputsystem管理外界输入输出的东西,30,TRUE,TRUE,ManualClick,N088
+N088,云柒,介绍完Hierarchy界面，我们再来介绍下面的Project界面,30,TRUE,TRUE,ManualClick,N089
+N089,云柒,Project：是项目资源的总管理器，类似文件资源管理器，负责组织、导入、查找项目中所有的 Asset，是开发中获取资源的核心入口Unity,30,TRUE,TRUE,ManualClick,N090
+N090,云柒,游戏中用的所有素材，脚本，预制体之类的都存储在这里,30,TRUE,TRUE,ManualClick,N091
+N091,云柒,Resources文件夹：是一个特殊的资源目录，核心作用是通过脚本动态加载资源，是项目中 “按需加载” 资源的核心通道,30,TRUE,TRUE,ManualClick,N092
+N092,云柒,StreamingAssets文件夹：存放无需 Unity 导入处理、可在运行时直接访问的原生文件，比如配置文件、视频、自定义数据等,30,TRUE,TRUE,ManualClick,N093
+N093,云柒,TextMesh Pro是unity制作的高清字体（可以这么理解）,30,TRUE,TRUE,ManualClick,N094
+N094,云柒,而在Project的两侧分别是Animation和Console,30,TRUE,TRUE,ManualClick,N095
+N095,云柒,Animation：动画系统 是让角色、物体 “动起来” 的核心工具,30,TRUE,TRUE,ManualClick,N096
+N096,云柒,Console：控制台是调试、排错、日志查看的核心窗口，所有代码的 Debug.Log 输出、报错、警告、打包信息都会集中在这里显示,30,TRUE,TRUE,ManualClick,N097
+N097,云柒,视角回到中间，我们能看见Scene Game Animator,30,TRUE,TRUE,ManualClick,N098
+N098,云柒,Scene：场景窗口是游戏的 “关卡 / 界面” 容器，主要功能是调试游戏场景,30,TRUE,TRUE,ManualClick,N099
+N099,云柒,Game：游戏窗口是实时预览游戏最终运行效果的核心窗口”。所有的脚本逻辑、动画、物理、UI 交互，都会在这里实时运行，是测试和调试的最终验证窗口,30,TRUE,TRUE,ManualClick,N100
+N100,云柒,Animator：状态机是控制角色 / 物体动画状态机的核心组件，是实现角色播放、切换、混合动画（比如走、跑、跳、攻击）的唯一官方方案,30,TRUE,TRUE,ManualClick,N101
+N101,云柒,右侧的窗口是整个unity的核心窗口Inspector,,,,,
+N102,云柒,Inspector：检查器窗口 是查看和修改选中对象所有属性的核心面板，是你开发中修改参数、配置组件的最主要入口,,,,,
+N103,云柒,当你点击任意一个游戏对象后，你就能看见他的详细属性，已经对象上挂接的组件,,,,,
+N104,云柒,例如说SpeakNameLamge游戏对象，他有RectTransform组件 CanvasRenderer组件 image组件,,,,,
+N105,云柒,具体是干什么都我就不多说了，有兴趣的话可以自己了解一下,,,,,
+N106,云柒,啰嗦了这么多，也该介绍一下项目了,,,,,
+N107,云柒,目前对话系统的所有大头都集中在DialogueRunner这个脚本上,,,,,
+N108,云柒,而仅仅是这个脚本就有惊人的657行代码,,,,,
+N109,云柒,,,,,,

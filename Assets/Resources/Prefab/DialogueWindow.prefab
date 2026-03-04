@@ -209,6 +209,8 @@ GameObject:
   - component: {fileID: 6470882404505547610}
   - component: {fileID: 4173850022541877922}
   - component: {fileID: 586658490157876205}
+  - component: {fileID: 4142412258845168737}
+  - component: {fileID: 8519033094763365814}
   m_Layer: 5
   m_Name: DialogueText
   m_TagString: Untagged
@@ -352,6 +354,45 @@ MonoBehaviour:
   targetSceneName: 
   dialogueWindowName: DialogueWindow
   dialogueTextPath: DialogueText
+--- !u!114 &4142412258845168737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948223954029806130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7913b27758c47524da45e4858beb32a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8519033094763365814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948223954029806130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b2e1674c7800da42874c672a41b8054, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textRenderer: {fileID: 586658490157876205}
+  tagParser: {fileID: 4142412258845168737}
+  soundController: {fileID: 0}
+  OnTextComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTextFinished:
+    m_PersistentCalls:
+      m_Calls: []
+  OnWaitForInput:
+    m_PersistentCalls:
+      m_Calls: []
+  OnResumeFromWait:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &3033606016155432796
 GameObject:
   m_ObjectHideFlags: 0
@@ -676,8 +717,9 @@ MonoBehaviour:
   nameText: {fileID: 5794841128368446515}
   avatarRect: {fileID: 5506999218249323582}
   canvasGroup: {fileID: 4623771350295073160}
-  dialogueTextRenderer: {fileID: 0}
-  dialogueTextSystem: {fileID: 0}
+  dialogueTextRenderer: {fileID: 586658490157876205}
+  dialogueTextSystem: {fileID: 8519033094763365814}
+  dialogueLabel: {fileID: 4173850022541877922}
   defaultStyle:
     font: {fileID: 11400000, guid: c6a3ac64745d85a43b1fcaca7ee88672, type: 2}
     fontSize: 36

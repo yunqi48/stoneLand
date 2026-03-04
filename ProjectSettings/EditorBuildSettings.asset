@@ -7,4 +7,4 @@ EditorBuildSettings:
   m_Scenes: []
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: da091820fcf86f045a06ed0b8aa49d94, type: 2}
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: d3403db8c7051944486fd021efc05c28, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 07ae5a1bbb1ff0546910c4eaa31e11d6, type: 3}
