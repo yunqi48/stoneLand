@@ -55,14 +55,4 @@ HideCurrentDialogue()
 架构细化与接口设计（建议）
 DialogueUIManager
 
-GetDialogueWindow(string windowId = "default"): DialogueWindow
-ShowDialogue(string speakerId, string dialogueText, string windowId = "default", TextPlaySettings settings = null)
-SwitchSpeaker(string speakerId)
-HideCurrentDialogue(bool instant = false)
-GetSpeakerProfile(string speakerId): SpeakerProfile
-RegisterSpeakerProfile(SpeakerProfile profile)
-DialogueWindow
-
-ApplyLayout(DialogueWindowLayout layout)
-ApplyStyle(DialogueStyle style)
-SetSpeaker(SpeakerProfile speaker)
+受制于unity影响暂时废弃。
